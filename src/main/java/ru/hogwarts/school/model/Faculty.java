@@ -1,10 +1,18 @@
 package ru.hogwarts.school.model;
-
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Objects;
-
+@Entity
 public class Faculty {
+@Id
+@GeneratedValue(strategy = GenerationType.AUTO)//будет использоваться автоинкриментация идентификатора на уровне БД
     private Long id;
     private String name, color;
+
+    public Faculty() {
+    }
 
     public Faculty(Long id, String name, String color) {
         this.id = id;
