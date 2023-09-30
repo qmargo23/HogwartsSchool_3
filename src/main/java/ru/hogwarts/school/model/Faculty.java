@@ -1,15 +1,19 @@
 package ru.hogwarts.school.model;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
+
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Entity
 public class Faculty {
-@Id
-@GeneratedValue(strategy = GenerationType.AUTO)//будет использоваться автоинкриментация идентификатора на уровне БД
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;//strategy = GenerationType.AUTO
     private String name, color;
+    @OneToMany
+    private List<Student> studentList;
 
     public Faculty() {
     }
@@ -18,28 +22,6 @@ public class Faculty {
         this.id = id;
         this.name = name;
         this.color = color;
-    }
-
-    @Override
-    public String toString() {
-        return "Faculty{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", color='" + color + '\'' +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Faculty)) return false;
-        Faculty faculty = (Faculty) o;
-        return Objects.equals(getId(), faculty.getId()) && Objects.equals(getName(), faculty.getName()) && Objects.equals(getColor(), faculty.getColor());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName(), getColor());
     }
 
     public Long getId() {
@@ -64,5 +46,35 @@ public class Faculty {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public List<Student> getStudentList() {
+        return studentList;
+    }
+
+    public void setStudentList(List<Student> studentList) {
+        this.studentList = studentList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Faculty)) return false;
+        Faculty faculty = (Faculty) o;
+        return Objects.equals(getId(), faculty.getId()) && Objects.equals(getName(), faculty.getName()) && Objects.equals(getColor(), faculty.getColor());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getColor());
+    }
+
+    @Override
+    public String toString() {
+        return "Faculty{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", color='" + color + '\'' +
+                '}';
     }
 }
