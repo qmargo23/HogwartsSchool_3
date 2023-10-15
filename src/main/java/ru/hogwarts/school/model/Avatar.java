@@ -1,16 +1,20 @@
 package ru.hogwarts.school.model;
 
 import javax.persistence.*;
+
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 public class Avatar {
     @Id
-    //@GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String filePath;
-    private Long fileSize;
+    private long fileSize;
     private String mediaType;
     @Lob
     private byte[] data;
@@ -19,7 +23,6 @@ public class Avatar {
 
     public Avatar() {
     }
-
 
     public Long getId() {
         return id;
@@ -37,11 +40,11 @@ public class Avatar {
         this.filePath = filePath;
     }
 
-    public Long getFileSize() {
+    public long getFileSize() {
         return fileSize;
     }
 
-    public void setFileSize(Long fileSize) {
+    public void setFileSize(long fileSize) {
         this.fileSize = fileSize;
     }
 
@@ -72,15 +75,15 @@ public class Avatar {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Avatar)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Avatar avatar = (Avatar) o;
-        return Objects.equals(getId(), avatar.getId()) && Objects.equals(getFilePath(), avatar.getFilePath()) && Objects.equals(getFileSize(), avatar.getFileSize()) && Objects.equals(getMediaType(), avatar.getMediaType()) && Arrays.equals(getData(), avatar.getData()) && Objects.equals(getStudent(), avatar.getStudent());
+        return Objects.equals(id, avatar.id) && Objects.equals(filePath, avatar.filePath) && Objects.equals(fileSize, avatar.fileSize) && Objects.equals(mediaType, avatar.mediaType) && Arrays.equals(data, avatar.data) && Objects.equals(student, avatar.student);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(getId(), getFilePath(), getFileSize(), getMediaType(), getStudent());
-        result = 31 * result + Arrays.hashCode(getData());
+        int result = Objects.hash(id, filePath, fileSize, mediaType, student);
+        result = 31 * result + Arrays.hashCode(data);
         return result;
     }
 

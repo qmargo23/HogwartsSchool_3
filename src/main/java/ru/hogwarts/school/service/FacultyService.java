@@ -5,10 +5,10 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 
-import java.util.List;
+import java.util.*;
 
 @Service
-public class FacultyService {
+public class FacultyService implements FacultyServiceInter{
 
     private final FacultyRepository facultyRepository;
     private final StudentService studentService;
@@ -18,27 +18,42 @@ public class FacultyService {
         this.studentService = studentService;
     }
 
-    public Faculty addFaculty(Faculty faculty) {//create-POST
+    @Override
+
+    public Faculty createFaculty(Faculty faculty){
         return facultyRepository.save(faculty);
     }
+    @Override
+    public List<Faculty>getFacultyByColor(String color){
+        return facultyRepository.getAllByColor(color);
 
-    public Faculty findFaculty(long id) {//read-GET
-        return facultyRepository.findById(id).get();
     }
+    @Override
+    public Set<Faculty>getFacultyByColorOrByName(String param){
+        Set<Faculty> result = new HashSet<>();
+        result.addAll(facultyRepository.getAllByColorIgnoreCase(param));
+        result.addAll(facultyRepository.getAllByNameIgnoreCase(param));
+        return result;
 
-    public Faculty editFaculty(Faculty faculty) {//update-PUT
+
+    }
+    @Override
+    public List<Student> getStudentByFacultyId(Long id){
+        return studentService.getByFacultyId(id);
+
+    }
+    @Override
+    public Optional<Faculty> findFaculty(Long id){
+        return facultyRepository.findById(id);
+    }
+    @Override
+    public Faculty editFaculty(Faculty faculty){
         return facultyRepository.save(faculty);
     }
-
-    public void deleteFaculty(long id) {//delete-DELETE
+    @Override
+    public void deleteFaculty(Long id){
         facultyRepository.deleteById(id);
     }
 
-    public List<Faculty> findByNameOrColorIgnoreCase(String name, String color) {
-        return facultyRepository.findByNameOrColorIgnoreCase(name, color);
-    }
 
-    public List<Student> getStudentsByFacultyId(Long id) {
-        return studentService.getByFacultyId(id);
-    }
 }

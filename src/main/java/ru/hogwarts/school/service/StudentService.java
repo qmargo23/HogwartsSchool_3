@@ -5,41 +5,54 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.List;
+import java.util.*;
 
 @Service
-public class StudentService {
+public class StudentService implements StudentServiceInter{
+
     private final StudentRepository studentRepository;
 
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    public Student createStudent(Student student) {//create-POST
+    @Override
+
+    public Student createStudent(Student student){
         return studentRepository.save(student);
     }
 
-    public Student findStudent(Long id) {//read-GET
+    @Override
+    public Student findStudent(Long id){
         return studentRepository.findById(id).get();
     }
-
-    public Student editStudent(Student student) {//update-PUT
-        return studentRepository.save(student);
+    @Override
+    public List<Student> findByAge(int age){
+        return studentRepository.getAllByAge(age);
     }
-
-    public void deleteStudent(long id) {//delete-DELETE
-        studentRepository.deleteById(id);
+    @Override
+    public List<Student> findByAgeBetween(int min,int max){
+        return  studentRepository.findAllByAgeBetween(min,max);
     }
-    public List<Student> findByAgeBetween(int min, int max) {
-        return studentRepository.findByAgeBetween(min, max);
-    }
-
-
+    @Override
     public Faculty getFacultyByStudentId(Long id) {
         return studentRepository.findById(id).get().getFaculty();
     }
 
+    @Override
     public List<Student> getByFacultyId(Long facultyId) {
         return studentRepository.findByFacultyId(facultyId);
     }
+    @Override
+    public Student editStudent(Student student){
+        return studentRepository.save(student);
+    }
+    @Override
+
+    public void deleteStudent(Long id){
+        studentRepository.deleteById(id);
+
+    }
+
+
 }

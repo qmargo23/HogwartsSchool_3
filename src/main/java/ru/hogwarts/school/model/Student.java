@@ -1,6 +1,10 @@
 package ru.hogwarts.school.model;
+//package ru.hogwarts.school.model;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -15,8 +19,7 @@ public class Student {
     @ManyToOne
     private Faculty faculty;
 
-    public Student() {
-    }
+
 
     public Student(Long id, String name, int age) {
         this.id = id;
@@ -24,12 +27,7 @@ public class Student {
         this.age = age;
     }
 
-    public Faculty getFaculty() {
-        return faculty;
-    }
-
-    public void setFaculty(Faculty faculty) {
-        this.faculty = faculty;
+    public Student() {
     }
 
     public Long getId() {
@@ -55,18 +53,25 @@ public class Student {
     public void setAge(int age) {
         this.age = age;
     }
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Student)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return getAge() == student.getAge() && Objects.equals(getId(), student.getId()) && Objects.equals(getName(), student.getName());
+        return age == student.age && Objects.equals(id, student.id) && Objects.equals(name, student.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getAge());
+        return Objects.hash(id, name, age);
     }
 
     @Override
