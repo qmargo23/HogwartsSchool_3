@@ -8,6 +8,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/faculty")
@@ -33,28 +34,23 @@ public class FacultyController {
     }
     @PutMapping//PUT
     public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
-        Faculty foundFaculty = facultyService.editFaculty(faculty);
-        if (foundFaculty == null) {
+        Faculty editFaculty = facultyService.editFaculty(faculty.getId(),faculty.getColor(),faculty.getColor());
+        if (editFaculty == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.ok(foundFaculty);
+        return ResponseEntity.ok(editFaculty);
     }
 
     @DeleteMapping("{id}")//DELETE
-    public ResponseEntity<Faculty> deleteFaculty(@PathVariable long id) {
-        facultyService.deleteFaculty(id);
-        return ResponseEntity.ok().build();
+    public Faculty deleteFaculty(@PathVariable long id) {
+        return facultyService.delete(id);
     }
 
     @GetMapping("/by-name-or-color")
-    ResponseEntity<List<Faculty>> findByNameOrColorIgnoreCase(@RequestParam(value = "name", required = false) String name,
-                                                              @RequestParam(value = "color", required = false) String color) {
-        List<Faculty> res = facultyService.findByNameOrColorIgnoreCase(name, color);
-        if (res.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(res);
+    public Set<Faculty> getByColorOrNameIgnoreCase(@RequestParam String param) {
+        return facultyService.getByColorOrNameIgnoreCase(param);
     }
+
     @GetMapping("/students-by-faculty-id")
     public List<Student> getStudentsByFacultyId(@RequestParam Long id) {
         return facultyService.getStudentsByFacultyId(id);

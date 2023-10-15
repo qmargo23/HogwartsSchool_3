@@ -19,11 +19,19 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
+
     public Student findStudent(Long id) {//read-GET
+        if (studentRepository.findById(id).isEmpty()) {
+            return null;
+        }
         return studentRepository.findById(id).get();
     }
 
     public Student editStudent(Student student) {//update-PUT
+        long studentId=student.getId();
+        if (studentRepository.findById(studentId).isEmpty()) {
+            return null;
+        }
         return studentRepository.save(student);
     }
 
