@@ -23,14 +23,19 @@ public class FacultyService {
     }
 
     public Faculty findFaculty(long id) {//read-GET
+        if (facultyRepository.findById(id).isEmpty()) {
+            return null;
+        }
         return facultyRepository.findById(id).get();
     }
-
+    //как достать и проверить на наличие Id?
     public Faculty editFaculty(Faculty faculty) {//update-PUT
+        //надо сделать проверку, иначе создается новая строка
         return facultyRepository.save(faculty);
     }
 
     public void deleteFaculty(long id) {//delete-DELETE
+        //как избежать ошибку 505 если метод ничего не возвращает?
         facultyRepository.deleteById(id);
     }
 

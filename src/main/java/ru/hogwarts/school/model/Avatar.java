@@ -5,9 +5,10 @@ import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
+//почему не отображается в SWAGGER/**/ схема как студен и факультет
 public class Avatar {
     @Id
-    //@GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String filePath;
     private Long fileSize;

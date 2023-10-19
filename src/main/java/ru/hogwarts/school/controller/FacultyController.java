@@ -18,11 +18,13 @@ public class FacultyController {
         this.facultyService = facultyService;
     }
 
+    // запись в БД появляется, но с непонятно места id, от чего это зависит?
     @PostMapping//POST
     public Faculty addFaculty(@RequestBody Faculty faculty) {
         return facultyService.addFaculty(faculty);
     }
 
+    //  почему не видит данные из БД, не могу получить ранее созданные. только последний 12
     @GetMapping("{id}")//GET
     public ResponseEntity<Faculty> getFacultyInfo(@PathVariable long id) {
         Faculty faculty = facultyService.findFaculty(id);
@@ -31,6 +33,8 @@ public class FacultyController {
         }
         return ResponseEntity.ok(faculty);
     }
+//создается новая строка что плохо как убрать через проверку наличия ID?
+
     @PutMapping//PUT
     public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
         Faculty foundFaculty = facultyService.editFaculty(faculty);
@@ -39,14 +43,16 @@ public class FacultyController {
         }
         return ResponseEntity.ok(foundFaculty);
     }
-
+    // ошибка 500, как ее избежать?
+    //
+    //org.springframework.dao.EmptyResultDataAccessException: No class ru.hogwarts.school.model.Faculty entity with id 0 exists!
     @DeleteMapping("{id}")//DELETE
     public ResponseEntity<Faculty> deleteFaculty(@PathVariable long id) {
         facultyService.deleteFaculty(id);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/by-name-or-color")
+    @GetMapping("/findFaculty-by-name-or-color")
     ResponseEntity<List<Faculty>> findByNameOrColorIgnoreCase(@RequestParam(value = "name", required = false) String name,
                                                               @RequestParam(value = "color", required = false) String color) {
         List<Faculty> res = facultyService.findByNameOrColorIgnoreCase(name, color);

@@ -1,17 +1,13 @@
 package ru.hogwarts.school.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.AvatarService;
 import ru.hogwarts.school.service.StudentService;
 
-import java.io.IOException;
 import java.util.Collection;
 
 
@@ -19,11 +15,9 @@ import java.util.Collection;
 @RequestMapping("/student")
 public class StudentController {
     private final StudentService studentService;
-    private final AvatarService avatarService;
 
-    public StudentController(StudentService studentService, AvatarService avatarService) {
+    public StudentController(StudentService studentService) {
         this.studentService = studentService;
-        this.avatarService = avatarService;
     }
 
     @PostMapping
@@ -51,8 +45,11 @@ public class StudentController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Student> deleteStudent(@PathVariable long id) {
-        studentService.deleteStudent(id);
-        return ResponseEntity.ok().build();
+        if (studentService.existByID(id)) {
+            studentService.deleteStudent(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/by-age-between")
@@ -64,9 +61,11 @@ public class StudentController {
     }
 
     @GetMapping("/faculty-by-student-id")
-    public Faculty getFacultyByStudentId(@RequestParam Long id) {
-        return studentService.getFacultyByStudentId(id);
+    public ResponseEntity<Faculty> getFacultyByStudentId(@RequestParam Long id) {
+        Faculty facultyByStudentId = studentService.getFacultyByStudentId(id);
+        if (facultyByStudentId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(facultyByStudentId);
     }
-
-
 }
