@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/avatar")
@@ -55,8 +57,7 @@ public class AvatarController {
         }
         Path path = Path.of(avatar.getFilePath());
         try (InputStream is = Files.newInputStream(path);
-             OutputStream os = response.getOutputStream();)
-        {
+             OutputStream os = response.getOutputStream();) {
 //            response.setStatus(200);
             response.setContentType(avatar.getMediaType());
             response.setContentLength(Math.toIntExact(avatar.getFileSize()));
@@ -64,4 +65,13 @@ public class AvatarController {
         }
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/avatar-page")
+    public ResponseEntity<List<Avatar>> getAllAvatarPage(
+            @RequestParam("page") Integer pageNumber,
+            @RequestParam("size") Integer pageSize) {
+        List<Avatar> avatars = avatarService.getAllAvatarStudentPage(pageNumber, pageSize);
+        return ResponseEntity.ok(avatars);
+    }
+//Avater появился в swagger/// почему только сейчас, после
 }
