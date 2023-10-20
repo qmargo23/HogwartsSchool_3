@@ -16,7 +16,7 @@ public class Avatar {
     private Long fileSize;
     private String mediaType;
     @Lob
-    @JsonIgnore
+//    @JsonIgnore
     private byte[] data;
     @OneToOne
     private Student student;

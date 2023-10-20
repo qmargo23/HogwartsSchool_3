@@ -54,6 +54,8 @@ public class StudentService {
         return studentRepository.findByFacultyId(facultyId);
     }
 
+
+
     public Integer getCount() {
         return studentRepository.getCountStudent();
     }

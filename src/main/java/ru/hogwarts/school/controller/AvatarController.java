@@ -73,5 +73,6 @@ public class AvatarController {
         List<Avatar> avatars = avatarService.getAllAvatarStudentPage(pageNumber, pageSize);
         return ResponseEntity.ok(avatars);
     }
+
 //Avater появился в swagger/// почему только сейчас, после
 }

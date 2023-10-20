@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/studentQuery")
 public class StudentQuery {
+
     private final StudentService studentService;
 
     public StudentQuery(StudentService studentService) {
