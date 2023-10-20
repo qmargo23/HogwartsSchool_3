@@ -9,7 +9,6 @@ import java.util.List;
 
 @Service
 public class FacultyService {
-
     private final FacultyRepository facultyRepository;
     private final StudentService studentService;
 
@@ -28,14 +27,16 @@ public class FacultyService {
         }
         return facultyRepository.findById(id).get();
     }
-    //как достать и проверить на наличие Id?
+
     public Faculty editFaculty(Faculty faculty) {//update-PUT
-        //надо сделать проверку, иначе создается новая строка
+        Faculty fromDB = findFaculty(faculty.getId());
+        if (fromDB == null) {
+            return null;
+        }
         return facultyRepository.save(faculty);
     }
 
     public void deleteFaculty(long id) {//delete-DELETE
-        //как избежать ошибку 505 если метод ничего не возвращает?
         facultyRepository.deleteById(id);
     }
 

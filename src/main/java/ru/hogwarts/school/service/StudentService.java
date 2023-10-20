@@ -28,16 +28,10 @@ public class StudentService {
 
     public Student editStudent(Student student) {//update-PUT
         Student fromDb = findStudent(student.getId());
-
         if (fromDb == null) {
             return null;
         }
-
         return studentRepository.save(student);
-    }
-//сделали для примера existByID
-    public boolean existByID(long id) {
-        return studentRepository.existsById(id);
     }
 
     public void deleteStudent(long id) {//delete-DELETE
@@ -47,7 +41,6 @@ public class StudentService {
     public List<Student> findByAgeBetween(int min, int max) {
         return studentRepository.findByAgeBetween(min, max);
     }
-
 
     public Faculty getFacultyByStudentId(Long id) {
         if (studentRepository.findById(id).isEmpty()) {

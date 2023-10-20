@@ -5,11 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
-import ru.hogwarts.school.service.AvatarService;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
-
 
 @RestController
 @RequestMapping("/student")
@@ -45,11 +43,12 @@ public class StudentController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Student> deleteStudent(@PathVariable long id) {
-        if (studentService.existByID(id)) {
-            studentService.deleteStudent(id);
-            return ResponseEntity.ok().build();
+        Student student = studentService.findStudent(id);
+        if (student == null) {
+            return ResponseEntity.notFound().build();//return 404
         }
-        return ResponseEntity.notFound().build();
+        studentService.deleteStudent(id);
+        return ResponseEntity.ok(student);
     }
 
     @GetMapping("/by-age-between")
