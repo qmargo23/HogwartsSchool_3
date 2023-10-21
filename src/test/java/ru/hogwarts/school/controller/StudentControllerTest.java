@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
-import ru.hogwarts.school.service.FacultyService;
 import ru.hogwarts.school.service.StudentService;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -26,80 +26,90 @@ class StudentControllerTest {
 //     и прописать в application.properties нужные данные
 
     @Test
-    void contextLoads() throws Exception {
+    public void contextLoads() throws Exception {
         Assertions.assertThat(studentService).isNotNull();
     }
 
     @Test
-    void addStudent() throws Exception {
-        //создаем нового студента
-        Student studentTest = new Student();
-        studentTest.setName("TEST");
-        studentTest.setAge(11);
+    public void addStudent() throws Exception {
+        ResponseEntity<Student> newStudentResponse = restTemplate.postForEntity("http://localhost:" + port + "/student", new Student(0L, "Test_Student", 12), Student.class);
+        Student newStudent = newStudentResponse.getBody();
 
         //готовим запрос   и готовим student через ObjectMapper()
-        String response = this.restTemplate.postForObject("http://localhost:" + port + "/student", studentTest, String.class);
+        String response = this.restTemplate.postForObject("http://localhost:" + port + "/student", newStudent, String.class);
         Student student = new ObjectMapper().readValue(response, Student.class);
 
         //проверка
         Assertions.assertThat(student.getId()).isNotNull();
-        Assertions.assertThat(student.getName()).isEqualTo(studentTest.getName());
-        Assertions.assertThat(student.getAge()).isEqualTo(studentTest.getAge());
+        Assertions.assertThat(student.getName()).isEqualTo(newStudent.getName());
+        Assertions.assertThat(student.getAge()).isEqualTo(newStudent.getAge());
     }
 
     @Test
-    void getStudentInfo() throws Exception {
-        Student studentTest = new Student(1L, "Test1", 1);
+    public void getStudentInfo() throws Exception {
+        ResponseEntity<Student> newStudentResponse = restTemplate.postForEntity("http://localhost:" + port + "/student", new Student(0L, "Test_Student", 12), Student.class);
+        Student newStudent = newStudentResponse.getBody();
 
-        String response = this.restTemplate.postForObject("http://localhost:" + port + "/student", studentTest, String.class);
-        Student student = new ObjectMapper().readValue(response, Student.class);
+        ResponseEntity<Student> getStudentInfoResponse = restTemplate.getForEntity("http://localhost:" + port + "/student/" + newStudent.getId(), Student.class);
+        Student getStudentInfo = getStudentInfoResponse.getBody();
 
         Assertions
-                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/student", String.class))
-                .isNotEmpty();
-        Assertions.assertThatObject(student).isEqualTo(studentTest);
+                .assertThat(getStudentInfo).isEqualTo(newStudent);
     }
 
+    //todo этот тест  все-равно "падает" при общем тестировании, а отдельно - проходит...
+    // почему  значение меняется на начальное?
+    // Expected :"TEST2"
+    // Actual   :"Test1"
+    // если отдельно тестировать - все проходит...
+    // что делеать?
     @Test
-    void editStudent() throws Exception {
-        Student studentTest = new Student(1L, "Test2", 2);
-        String response = this.restTemplate.postForObject("http://localhost:" + port + "/student", studentTest, String.class);
+    public void editStudent() throws Exception {
+        ResponseEntity<Faculty> newFacultyResponse = restTemplate.postForEntity("http://localhost:" + port + "/faculty", new Faculty(0L, "New faculty", "red"), Faculty.class);
+        Faculty newFaculty = newFacultyResponse.getBody();
+        ResponseEntity<Student> newStudentResponse = restTemplate.postForEntity("http://localhost:" + port + "/student", new Student(0L, "Test1", 12, newFaculty), Student.class);
+        Student newStudent = newStudentResponse.getBody();
+        newStudent.setName("TEST2");
+        newStudent.setAge(23);
+
+        restTemplate.put("http://localhost:" + port + "/student", newStudent);
+//        ResponseEntity<Student> getStudentInfoResponse = restTemplate.getForEntity("http://localhost:" + port + "/student/" + newStudent.getId(), Student.class);
+//        Student getStudentInfo = getStudentInfoResponse.getBody();
+
+        String response = this.restTemplate.getForObject("http://localhost:" + port + "/student/" + newStudent.getId(), String.class);
         Student student = new ObjectMapper().readValue(response, Student.class);
 
-        studentTest.setName("Test1");
-        studentTest.setAge(1);
-        restTemplate.put("http://localhost:" + port + "/student", studentTest, String.class);
-        String responseEdit = this.restTemplate.getForObject("http://localhost:" + port + "/student/" + student.getId(), String.class);
-        Student studentEdit = new ObjectMapper().readValue(responseEdit, Student.class);
+        System.out.println(student);
 
         Assertions
-                .assertThat(responseEdit).isNotEmpty();
-        Assertions.assertThat(studentEdit.getName()).isEqualTo(studentTest.getName());
-        Assertions.assertThat(studentEdit.getAge()).isEqualTo(studentTest.getAge());
+                .assertThat(student.getName()).isEqualTo(newStudent.getName());
+        Assertions
+                .assertThat(student.getAge()).isEqualTo(newStudent.getAge());
     }
 
     @Test
-    void deleteStudent() throws Exception {
-        Student studentTest = new Student(1L, "Test3", 3);
-        String response = this.restTemplate.postForObject("http://localhost:" + port + "/student", studentTest, String.class);
-        Student student = new ObjectMapper().readValue(response, Student.class);
+    public void deleteStudent() throws Exception {
+        ResponseEntity<Student> newStudentResponse = restTemplate.postForEntity("http://localhost:" + port + "/student", new Student(0L, "name", 12), Student.class);
+        Student newStudent = newStudentResponse.getBody();
 
-        restTemplate.delete("http://localhost:" + port + "/student/" + student.getId());
-        String responseEdit = this.restTemplate.getForObject("http://localhost:" + port + "/student/" + student.getId(), String.class);
+        restTemplate.delete("http://localhost:" + port + "/student/" + newStudent.getId(), Student.class);
+        ResponseEntity<Student> studentEntity = restTemplate.getForEntity("http://localhost:" + port + "/student/" + newStudent.getId(), Student.class);
+        Student student = studentEntity.getBody();
 
-        Assertions.assertThat(response).isNotEmpty();
-        Assertions.assertThat(responseEdit).isNull();
+        Assertions
+                .assertThat(newStudent).isNotNull();
+        Assertions
+                .assertThat(student).isNull();
     }
 
     @Test
-    void findByAgeBetween() throws Exception {
+    public void findByAgeBetween() throws Exception {
         Student studentTest1 = new Student(1L, "Test1", 1);
         Student studentTest2 = new Student(2L, "Test2", 5);
         Student studentTest3 = new Student(3L, "Test3", 15);
         this.restTemplate.postForObject("http://localhost:" + port + "/student", studentTest1, String.class);
         String response2 = this.restTemplate.postForObject("http://localhost:" + port + "/student", studentTest2, String.class);
         this.restTemplate.postForObject("http://localhost:" + port + "/student", studentTest3, String.class);
-        Student student2 = new ObjectMapper().readValue(response2, Student.class);
 
         String response = this.restTemplate.getForObject("http://localhost:" + port + "/student/by-age-between?min=2&max=10", String.class);
 
@@ -108,28 +118,15 @@ class StudentControllerTest {
     }
 
     @Test
-    void getFacultyByStudentId() throws Exception {
-        Faculty facultyTest = new Faculty(1L, "name", "color");
-        String facultyResponse = this.restTemplate.postForObject("http://localhost:" + port + "/faculty", facultyTest, String.class);
-        Faculty faculty = new ObjectMapper().readValue(facultyResponse, Faculty.class);
-//Faculty{id=1, name='name', color='color'}
+    public void getFacultyByStudentId() throws Exception {
+        ResponseEntity<Faculty> newFacultyResponse = restTemplate.postForEntity("http://localhost:" + port + "/faculty", new Faculty(0L, "New faculty", "red"), Faculty.class);
+        Faculty newFaculty = newFacultyResponse.getBody();
+        ResponseEntity<Student> newStudentResponse = restTemplate.postForEntity("http://localhost:" + port + "/student", new Student(0L, "Test_Student", 12, newFaculty), Student.class);
+        Student newStudent = newStudentResponse.getBody();
 
-        Student studentTest = new Student(1L, "Test1", 1);
-        String studentResponse = this.restTemplate.postForObject("http://localhost:" + port + "/student", studentTest, String.class);
-        Student student = new ObjectMapper().readValue(studentResponse, Student.class);
-        student.setFaculty(facultyTest);
-//Student{id=1, name='Test1', age=1}
-//1 setFaculty
+        ResponseEntity<Faculty> getFacultyByStudentResponse = restTemplate.getForEntity("http://localhost:" + port + "/student/faculty-by-student-id?id=" + newStudent.getId(), Faculty.class);
+        Faculty getFacultyByStudent = getFacultyByStudentResponse.getBody();
 
-        Faculty fromDB = restTemplate.getForObject("http://localhost:" + port + "/student/faculty-by-student-id/1", Faculty.class);
-
-        System.out.println(fromDB);
-
-        //todo:  помогите доделать тест
-
-        //не могу разобрать почему возращает null
-        //дальше тест не могу написать
-        //просьба помочь с написанием этого теста
-
+        Assertions.assertThat(getFacultyByStudent).isEqualTo(newStudent.getFaculty());
     }
 }

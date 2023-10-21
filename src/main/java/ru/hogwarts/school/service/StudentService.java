@@ -27,8 +27,9 @@ public class StudentService {
     }
 
     public Student editStudent(Student student) {//update-PUT
-        Student fromDb = findStudent(student.getId());
-        if (fromDb == null) {
+        Student studentFromDb = findStudent(student.getId());
+        Student facultyFromDB = findStudent(student.getFaculty().getId());
+        if (studentFromDb == null|| facultyFromDB==null) {
             return null;
         }
         return studentRepository.save(student);
