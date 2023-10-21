@@ -28,8 +28,8 @@ public class StudentService {
 
     public Student editStudent(Student student) {//update-PUT
         Student studentFromDb = findStudent(student.getId());
-        Student facultyFromDB = findStudent(student.getFaculty().getId());
-        if (studentFromDb == null|| facultyFromDB==null) {
+
+        if (studentFromDb == null) {
             return null;
         }
         return studentRepository.save(student);

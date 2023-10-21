@@ -105,14 +105,8 @@ class FacultyControllerTest {
         ResponseEntity<Student> newStudentResponse = restTemplate.
                 postForEntity("http://localhost:" + port + "/student", new Student(0L, "NAME_01", 10, newFaculty), Student.class);
 
-        String responseGetStudent = this.restTemplate.getForObject("http://localhost:" + port + "/faculty/students-by-faculty-id?id=" + newFaculty.getId(), String.class);
-        String res = responseGetStudent;//[{"id":1,"name":"NAME_01","age":10,"faculty":{"id":1,"name":"New faculty","color":"red"}}]
-        //  какой будет ЗАПРОС - получить список студентов getStudentsByFacultyIdResponse
-        ResponseEntity<Student> getStudentsByFacultyIdResponse;//todo  узнать код (для получения списка)
-        // как получить???? как вытащить данные из responseGetStudent, чтобы сравнивать конкретные поля???
-
-        //"топорно" проверяем что в строке есть нужный студент//получаем// Local variable 'res' is redundant
         Assertions
-                .assertThat(res).isEqualTo(responseGetStudent);
+                .assertThat(restTemplate.getForObject("http://localhost:" + port + "/faculty/students-by-faculty-id?id=" + newFaculty.getId(), String.class))
+                .isNotNull();
     }
 }

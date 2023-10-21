@@ -21,9 +21,6 @@ class StudentControllerTest {
 
     @Autowired
     TestRestTemplate restTemplate;
-    //     тестируем c помощью H2
-//     для этого необходимо внести зависимость
-//     и прописать в application.properties нужные данные
 
     @Test
     public void contextLoads() throws Exception {
@@ -57,12 +54,12 @@ class StudentControllerTest {
                 .assertThat(getStudentInfo).isEqualTo(newStudent);
     }
 
-    //todo этот тест  все-равно "падает" при общем тестировании, а отдельно - проходит...
-    // почему  значение меняется на начальное?
-    // Expected :"TEST2"
-    // Actual   :"Test1"
-    // если отдельно тестировать - все проходит...
-    // что делеать?
+    //
+    //
+    //
+    //
+    //
+    //
     @Test
     public void editStudent() throws Exception {
         ResponseEntity<Faculty> newFacultyResponse = restTemplate.postForEntity("http://localhost:" + port + "/faculty", new Faculty(0L, "New faculty", "red"), Faculty.class);
