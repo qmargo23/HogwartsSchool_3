@@ -2,7 +2,9 @@ package ru.hogwarts.school.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +12,10 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FacultyServiceTest {
+//    @Autowired
+//    FacultyService facultyService;
+//    @Autowired
+//    FacultyRepository facultyRepository;
 //private final FacultyService out = new FacultyService(facultyRepository);
 //    @Test
 //    void addFaculty() {
