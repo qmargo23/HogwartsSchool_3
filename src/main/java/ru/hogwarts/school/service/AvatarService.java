@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +27,7 @@ public class AvatarService {
     private String avatarsDir;
     private final StudentService studentService;
     private final AvatarRepository avatarRepository;
+    private final Logger logger = LoggerFactory.getLogger(AvatarService.class);
 
     public AvatarService(StudentService studentService, AvatarRepository avatarRepository) {
         this.studentService = studentService;
@@ -32,6 +35,7 @@ public class AvatarService {
     }
 
     public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
+        logger.info("Was invoked method for uploadAvatar");
         Student student = studentService.findStudent(studentId);
         Path filePath = Path.of(avatarsDir,
                 student + "." +
@@ -66,6 +70,7 @@ public class AvatarService {
     public byte[] generateImagePreview(Path filePath) throws IOException {
         //метод уменьшает размер исходной картинки в малый размер - делает превью
         //для сохранения уменьшенной копии в самой БД
+        logger.info("Was invoked method for generateImagePreview");
         try (InputStream is = Files.newInputStream(filePath);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -83,10 +88,12 @@ public class AvatarService {
     }
 
     public String getExtensions(String fileName) {
+        logger.debug("Getting value for getExtensions");
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
     public Avatar findAvatar(Long studentId) {
+        logger.info("Was invoked method for findAvatar");
         return avatarRepository.findByStudentId(studentId).orElse(new Avatar());
     }
 }

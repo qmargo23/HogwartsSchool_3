@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
@@ -11,6 +13,7 @@ import java.util.List;
 public class FacultyService {
     private final FacultyRepository facultyRepository;
     private final StudentService studentService;
+    private final Logger logger = LoggerFactory.getLogger(FacultyService.class);
 
     public FacultyService(FacultyRepository facultyRepository, StudentService studentService) {
         this.facultyRepository = facultyRepository;
@@ -18,10 +21,12 @@ public class FacultyService {
     }
 
     public Faculty addFaculty(Faculty faculty) {//create-POST
+        logger.info("Was invoked method for addFaculty");
         return facultyRepository.save(faculty);
     }
 
     public Faculty findFaculty(long id) {//read-GET
+        logger.info("Was invoked method for findFaculty");
         if (facultyRepository.findById(id).isEmpty()) {
             return null;
         }
@@ -29,6 +34,7 @@ public class FacultyService {
     }
 
     public Faculty editFaculty(Faculty faculty) {//update-PUT
+        logger.info("Was invoked method for editFaculty");
         Faculty fromDB = findFaculty(faculty.getId());
         if (fromDB == null) {
             return null;
@@ -37,14 +43,17 @@ public class FacultyService {
     }
 
     public void deleteFaculty(long id) {//delete-DELETE
+        logger.info("Was invoked method for deleteFaculty");
         facultyRepository.deleteById(id);
     }
 
     public List<Faculty> findByNameOrColorIgnoreCase(String name, String color) {
+        logger.info("Was invoked method for findByNameOrColorIgnoreCase");
         return facultyRepository.findByNameOrColorIgnoreCase(name, color);
     }
 
     public List<Student> getStudentsByFacultyId(Long id) {
+        logger.info("Was invoked method for getStudentsByFacultyId");
         return studentService.getByFacultyId(id);
     }
 }
