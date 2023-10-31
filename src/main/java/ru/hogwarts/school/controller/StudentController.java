@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import liquibase.pro.packaged.R;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +9,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/student")
@@ -67,4 +69,20 @@ public class StudentController {
         }
         return ResponseEntity.ok(facultyByStudentId);
     }
+
+    @GetMapping("/find-students-by-A")
+    public ResponseEntity<List<String>> findStudentsNameBeginsA() {
+        List<String> studentsA= studentService.findStudentsNameBeginsA();
+        if (studentsA.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(studentsA);
+    }
+
+    @GetMapping("/count-avg-age-all=students")
+    public ResponseEntity<Double> countAvgAgeOfAllStudents() {
+        Double result= studentService.countAvgAgeOfAllStudents();
+            return ResponseEntity.ok(result);
+    }
+
 }
