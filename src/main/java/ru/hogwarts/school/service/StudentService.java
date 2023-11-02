@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class StudentService {
     private final Logger logger = LoggerFactory.getLogger(StudentService.class);
     private final StudentRepository studentRepository;
+    private volatile int count = 0;
 
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
@@ -85,5 +86,64 @@ public class StudentService {
         return students.stream()
                 .mapToDouble(Student::getAge)
                 .average().getAsDouble();
+    }
+
+    public void getStudentsByThread() {
+        var students = studentRepository.findAll()
+                .stream()
+                .map(Student::getName)
+                .limit(6)
+                .collect(Collectors.toList());
+
+        System.out.println(students);
+
+        System.out.println(students.get(0));
+        System.out.println(students.get(1));
+        new Thread(() -> {
+            try {
+                Thread.sleep(500);
+                System.out.println(students.get(2));
+                Thread.sleep(500);
+                System.out.println(students.get(3));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+        new Thread(() -> {
+            System.out.println(students.get(4));
+            System.out.println(students.get(5));
+        }).start();
+    }
+
+    public  void getStudentsBySynchronizedThread() {
+        var students = studentRepository.findAll()
+                .stream()
+                .map(Student::getName)
+                .limit(6)
+                .collect(Collectors.toList());
+
+        System.out.println(students);// List_name of_students
+
+        printSynchronized(students);//0
+        printSynchronized(students);//1
+        new Thread(() -> {
+            try {
+                Thread.sleep(500);
+                printSynchronized(students);//2
+                Thread.sleep(500);
+                printSynchronized(students);//3
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+        new Thread(() -> {
+            printSynchronized(students);//4
+            printSynchronized(students);//5
+        }).start();
+    }
+
+    private synchronized void printSynchronized(List<String> students) {
+        System.out.println(students.get(count));
+        count++;
     }
 }

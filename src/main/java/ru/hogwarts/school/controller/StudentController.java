@@ -85,4 +85,13 @@ public class StudentController {
             return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/students-by-Thread")
+    public void getStudentsByThread () {
+        studentService.getStudentsByThread();
+    }
+
+    @GetMapping("/students-by-synchronized-Thread")
+    public  void getStudentsBySynchronizedThread () {
+        studentService.getStudentsBySynchronizedThread();
+    }
 }
